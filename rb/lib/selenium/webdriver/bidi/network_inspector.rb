@@ -40,16 +40,16 @@ module Selenium
           @bidi.session.subscribe('network.responseCompleted', browsing_context_ids)
         end
 
-        def before_request_sent(&block)
-          on(:before_request_sent, &block)
+        def before_request_sent(&)
+          on(:before_request_sent, &)
         end
 
-        def response_started(&block)
-          on(:response_started, &block)
+        def response_started(&)
+          on(:response_started, &)
         end
 
-        def response_completed(&block)
-          on(:response_completed, &block)
+        def response_completed(&)
+          on(:response_completed, &)
         end
 
         private
