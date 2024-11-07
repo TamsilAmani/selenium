@@ -22,14 +22,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 import static org.openqa.selenium.support.ui.ExpectedConditions.alertIsPresent;
 import static org.openqa.selenium.support.ui.ExpectedConditions.titleIs;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
-import static org.openqa.selenium.testing.Safely.safelyCall;
-import static org.openqa.selenium.testing.drivers.Browser.FIREFOX;
-import static org.openqa.selenium.testing.drivers.Browser.IE;
-import static org.openqa.selenium.testing.drivers.Browser.SAFARI;
 
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -38,27 +32,16 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
 import org.openqa.selenium.bidi.BiDiException;
 import org.openqa.selenium.bidi.module.Browser;
-import org.openqa.selenium.environment.webserver.AppServer;
-import org.openqa.selenium.environment.webserver.NettyAppServer;
 import org.openqa.selenium.environment.webserver.Page;
 import org.openqa.selenium.print.PrintOptions;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.testing.JupiterTestBase;
-import org.openqa.selenium.testing.NotYetImplemented;
+import org.openqa.selenium.testing.NeedsFreshDriver;
 
 class BrowsingContextTest extends JupiterTestBase {
 
-  private AppServer server;
-
-  @BeforeEach
-  public void setUp() {
-    server = new NettyAppServer();
-    server.start();
-  }
-
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCreateABrowsingContextForGivenId() {
     String id = driver.getWindowHandle();
     BrowsingContext browsingContext = new BrowsingContext(driver, id);
@@ -66,16 +49,14 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCreateAWindow() {
     BrowsingContext browsingContext = new BrowsingContext(driver, WindowType.WINDOW);
     assertThat(browsingContext.getId()).isNotEmpty();
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCreateAWindowWithAReferenceContext() {
     BrowsingContext browsingContext =
         new BrowsingContext(
@@ -86,16 +67,14 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCreateATab() {
     BrowsingContext browsingContext = new BrowsingContext(driver, WindowType.TAB);
     assertThat(browsingContext.getId()).isNotEmpty();
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCreateATabWithAReferenceContext() {
     BrowsingContext browsingContext =
         new BrowsingContext(
@@ -105,8 +84,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCreateAContextWithAllParameters() {
     Browser browser = new Browser(driver);
     String userContextId = browser.createUserContext();
@@ -123,12 +101,11 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canNavigateToAUrl() {
     BrowsingContext browsingContext = new BrowsingContext(driver, WindowType.TAB);
 
-    String url = server.whereIs("/bidi/logEntryAdded.html");
+    String url = appServer.whereIs("/bidi/logEntryAdded.html");
     NavigationResult info = browsingContext.navigate(url);
 
     assertThat(browsingContext.getId()).isNotEmpty();
@@ -136,12 +113,11 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canNavigateToAUrlWithReadinessState() {
     BrowsingContext browsingContext = new BrowsingContext(driver, WindowType.TAB);
 
-    String url = server.whereIs("/bidi/logEntryAdded.html");
+    String url = appServer.whereIs("/bidi/logEntryAdded.html");
     NavigationResult info = browsingContext.navigate(url, ReadinessState.COMPLETE);
 
     assertThat(browsingContext.getId()).isNotEmpty();
@@ -149,13 +125,12 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canGetTreeWithAChild() {
     String referenceContextId = driver.getWindowHandle();
     BrowsingContext parentWindow = new BrowsingContext(driver, referenceContextId);
 
-    String url = server.whereIs("iframes.html");
+    String url = appServer.whereIs("iframes.html");
 
     parentWindow.navigate(url, ReadinessState.COMPLETE);
 
@@ -169,13 +144,12 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canGetTreeWithDepth() {
     String referenceContextId = driver.getWindowHandle();
     BrowsingContext parentWindow = new BrowsingContext(driver, referenceContextId);
 
-    String url = server.whereIs("iframes.html");
+    String url = appServer.whereIs("iframes.html");
 
     parentWindow.navigate(url, ReadinessState.COMPLETE);
 
@@ -188,8 +162,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canGetAllTopLevelContexts() {
     BrowsingContext window1 = new BrowsingContext(driver, driver.getWindowHandle());
     BrowsingContext window2 = new BrowsingContext(driver, WindowType.WINDOW);
@@ -200,8 +173,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCloseAWindow() {
     BrowsingContext window1 = new BrowsingContext(driver, WindowType.WINDOW);
     BrowsingContext window2 = new BrowsingContext(driver, WindowType.WINDOW);
@@ -212,8 +184,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCloseATab() {
     BrowsingContext tab1 = new BrowsingContext(driver, WindowType.TAB);
     BrowsingContext tab2 = new BrowsingContext(driver, WindowType.TAB);
@@ -224,8 +195,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canActivateABrowsingContext() {
     BrowsingContext window1 = new BrowsingContext(driver, driver.getWindowHandle());
     // 2nd window is focused
@@ -243,12 +213,11 @@ class BrowsingContextTest extends JupiterTestBase {
   // Refer: https://github.com/w3c/webdriver-bidi/issues/187
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canReloadABrowsingContext() {
     BrowsingContext browsingContext = new BrowsingContext(driver, WindowType.TAB);
 
-    String url = server.whereIs("/bidi/logEntryAdded.html");
+    String url = appServer.whereIs("/bidi/logEntryAdded.html");
     browsingContext.navigate(url, ReadinessState.COMPLETE);
 
     NavigationResult reloadInfo = browsingContext.reload();
@@ -257,12 +226,11 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canReloadWithReadinessState() {
     BrowsingContext browsingContext = new BrowsingContext(driver, WindowType.TAB);
 
-    String url = server.whereIs("/bidi/logEntryAdded.html");
+    String url = appServer.whereIs("/bidi/logEntryAdded.html");
     browsingContext.navigate(url, ReadinessState.COMPLETE);
 
     NavigationResult reloadInfo = browsingContext.reload(ReadinessState.COMPLETE);
@@ -272,8 +240,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canHandleUserPrompt() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -288,8 +255,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canAcceptUserPrompt() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -304,8 +270,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canDismissUserPrompt() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -320,8 +285,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canPassUserTextToUserPrompt() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -338,8 +302,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canAcceptUserPromptWithUserText() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -356,8 +319,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canDismissUserPromptWithUserText() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -381,8 +343,7 @@ class BrowsingContextTest extends JupiterTestBase {
   // TODO: A potential solution can be replicating classic WebDriver screenshot tests.
   // Meanwhile, trusting the browsers to do the right thing.
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCaptureScreenshot() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -394,8 +355,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCaptureScreenshotWithAllParameters() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -421,8 +381,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCaptureScreenshotOfViewport() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -439,8 +398,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canCaptureElementScreenshot() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -455,8 +413,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canSetViewport() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
     driver.get(appServer.whereIs("formPage.html"));
@@ -473,9 +430,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
-  @NotYetImplemented(FIREFOX)
+  @NeedsFreshDriver
   void canSetViewportWithDevicePixelRatio() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
     driver.get(appServer.whereIs("formPage.html"));
@@ -497,8 +452,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canPrintPage() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
 
@@ -516,8 +470,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canNavigateBackInTheBrowserHistory() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
     browsingContext.navigate(pages.formPage, ReadinessState.COMPLETE);
@@ -530,8 +483,7 @@ class BrowsingContextTest extends JupiterTestBase {
   }
 
   @Test
-  @NotYetImplemented(SAFARI)
-  @NotYetImplemented(IE)
+  @NeedsFreshDriver
   void canNavigateForwardInTheBrowserHistory() {
     BrowsingContext browsingContext = new BrowsingContext(driver, driver.getWindowHandle());
     browsingContext.navigate(pages.formPage, ReadinessState.COMPLETE);
@@ -572,13 +524,5 @@ class BrowsingContextTest extends JupiterTestBase {
 
   private boolean getDocumentFocus() {
     return (boolean) ((JavascriptExecutor) driver).executeScript("return document.hasFocus();");
-  }
-
-  @AfterEach
-  public void quitDriver() {
-    if (driver != null) {
-      driver.quit();
-    }
-    safelyCall(server::stop);
   }
 }
